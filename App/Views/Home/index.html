@@ -31,7 +31,7 @@
                                         <li><a onclick="getProductsAndRender('views')"><i
                                                 class="cv cvicon-cv-calender"></i>
                                             Popularité</a></li>
-                                        <li><a onclick="getProductsAndRender('date')"><i
+                                        <li><a onclick="getProductsAndRender('asc', 'desc')"><i
                                                 class="cv cvicon-cv-calender"></i>
                                             Récent</a></li>
                                     </ul>
@@ -58,18 +58,30 @@
 {% block javascript %}
     <script type="text/javascript">
 
-        function getProductsAndRender(option = ''){
+        function getProductsAndRender(option = '', dateSortOption = ''){
             $.ajax({
-                url: "/api/products" + '?sort=' + option,
+                url: "/api/products?sort=" + option,
+                data: {
+                    date_sort: dateSortOption
+                }
             }).done(function(result) {
                 $('#articlelist').empty();
-                for(let i = 0; i < result.length; i++){
-                    renderProduct(result[i])
-                }
+                const sortedProducts = result.sort(function(a, b) {
+                    const dateA = new Date(a.date);
+                    const dateB = new Date(b.date);
+                    if (dateSortOption === 'desc') {
+                        return dateB - dateA;
+                    } else {
+                        return dateA - dateB;
+                    }
+                });
+                for(let i = 0; i < sortedProducts.length; i++){
+                renderProduct(sortedProducts[i])
+                }   
             });
         }
 
-        function renderProduct($product){
+        function renderProduct($product){ 
              $('<div class="col-lg-4 col-sm-6 articleitem" id="article-pattern">' +
                 '                                <div class="b-article">' +
                 '                                    <div class="v-img">' +
@@ -91,5 +103,7 @@
         $( document ).ready(function() {
             getProductsAndRender();
         });
+
+        
     </script>
 {% endblock %}

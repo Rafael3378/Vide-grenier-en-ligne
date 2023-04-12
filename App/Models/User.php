@@ -35,9 +35,7 @@ class User extends Model {
     {
         $db = static::getDB();
 
-        $stmt = $db->prepare("
-            SELECT * FROM users WHERE ( users.email = :email) LIMIT 1
-        ");
+        $stmt = $db->prepare('SELECT * FROM users WHERE ( users.email = :email) LIMIT 1');
 
         $stmt->bindParam(':email', $login);
         $stmt->execute();
@@ -64,7 +62,7 @@ class User extends Model {
 
 
      /**
-     * Créé un nouveau mot de passe
+     * vérification mail existant dans modification mot de passe
      */
     public static function resetPassword($email){
         $db = static::getDB();

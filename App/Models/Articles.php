@@ -19,7 +19,7 @@ class Articles extends Model {
      * @return string|boolean
      * @throws Exception
      */
-    public static function getAll($filter) {
+    public static function getAll($filter) { 
         $db = static::getDB();
 
         $query = 'SELECT * FROM articles ';

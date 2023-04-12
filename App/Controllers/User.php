@@ -113,6 +113,14 @@ class User extends \Core\Controller
             // to remained logged in on the login form.
             // https://github.com/andrewdyer/php-mvc-register-login/blob/development/www/app/Model/UserLogin.php#L86
 
+            // création du cookie remember-me à stocker dans une table
+            if(isset($data['remember-me']) && $data['remember-me'] == true){
+                $token = bin2hex(random_bytes(16));
+                $expiry = time() + (60 * 60 * 24 * 30); // 30 days
+                setcookie('remember-me', $user['id'] . ':' . $token, $expiry, '/');
+                // \App\Models\User::updateRememberToken($user['id'], $token); ****** création d'une table pour plus tard
+            }
+
             $_SESSION['user'] = array(
                 'id' => $user['id'],
                 'username' => $user['username'],
@@ -142,6 +150,16 @@ class User extends \Core\Controller
             // https://github.com/andrewdyer/php-mvc-register-login/blob/development/www/app/Model/UserLogin.php#L148
         }*/
         // Destroy all data registered to the session.
+
+        // supression du cookie remember-me stocker dans une table
+        if(isset($_COOKIE['remember-me'])){
+            list ($user_id, $token) = explode(':', $_COOKIE['remember-me']);
+            setcookie('remember-me', '', time() - 3600, '/');
+            // \App\Models\User::updateRememberToken($user_id, null); ****** création d'une table pour plus tard
+        }
+
+        setcookie('email','',time()-3600);
+        setcookie('password','',time()-3600);
 
         $_SESSION = array();
 
